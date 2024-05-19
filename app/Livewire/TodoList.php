@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Todo;
+use Exception;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -44,12 +45,26 @@ class TodoList extends Component
 
     public function edit($todoId) {
         $this->editingTodoId = $todoId;
-
-        $this->editingTodoName = Todo::find($todoId)->name;
+        
+        try {
+            $this->editingTodoName = Todo::find($todoId)->name;
+        } catch(Exception $e) {
+            $this->dispatch('updateError');
+        }
     }
 
     public function update() {
         $this->validateOnly('editingTodoName');
+
+        try {
+            Todo::findOrFail($this->editingTodoId)->update(
+                [
+                    'name' => $this->editingTodoName
+                ]
+            );
+        } catch(Exception $e) {
+            $this->dispatch('updateError');
+        }
 
         Todo::find($this->editingTodoId)->update(
             [
@@ -65,7 +80,11 @@ class TodoList extends Component
     }
 
     public function delete($todoId) {
-        Todo::find($todoId)->delete();
+        try {
+            Todo::findOrFail($todoId)->delete();
+        } catch(Exception $e) {
+            $this->dispatch('deleteError');
+        }
     }
 
     public function render()

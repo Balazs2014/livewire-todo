@@ -27,6 +27,12 @@ class TodoList extends Component
         session()->flash('success', 'Created.');
     }
 
+    public function toggle($todoId) {
+        $todo = Todo::find($todoId);
+        $todo->completed = !$todo->completed;
+        $todo->save();
+    }
+
     public function render()
     {
         return view('livewire.todo-list', [

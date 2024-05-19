@@ -30,6 +30,8 @@ class TodoList extends Component
         $this->reset('name');
 
         session()->flash('success', 'Created.');
+
+        $this->resetPage();
     }
 
     public function toggle($todoId) {
